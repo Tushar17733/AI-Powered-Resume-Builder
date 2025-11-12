@@ -31,6 +31,44 @@ const ResumePreview = ({ resumeData, templateId = 'modern' }) => {
 
   const printPreview = () => {
     if (!previewRef.current) return;
+    
+    // For mobile devices, use a simpler approach
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    
+    if (isMobile) {
+      // Mobile: Direct window.print() with better styling
+      const originalContents = document.body.innerHTML;
+      const printContents = previewRef.current.innerHTML;
+      const documentTitle = `${resumeData?.personalInfo?.fullName || 'Resume'}`;
+      
+      document.body.innerHTML = `
+        <html>
+          <head>
+            <title>${documentTitle}</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+            <style>
+              @page { size: A4; margin: 0; }
+              * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+              body { margin: 0; padding: 20px; font-family: Arial, sans-serif; }
+              @media print {
+                body { margin: 0; padding: 0; }
+                * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+              }
+            </style>
+          </head>
+          <body>
+            ${printContents}
+          </body>
+        </html>
+      `;
+      
+      window.print();
+      document.body.innerHTML = originalContents;
+      window.location.reload();
+      return;
+    }
+    
+    // Desktop: Open new window
     const printWindow = window.open('', '_blank');
     if (!printWindow) return;
 

@@ -151,22 +151,22 @@ const ExperienceForm = ({ data, onChange, onEnhance, loading, onGenerateDescript
           </div>
           
           <div>
-            <div className="flex justify-between items-center mb-2">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-2">
               <label className="block text-gray-700 dark:text-gray-300" htmlFor={`description-${experience.id}`}>
                 Work Experience & Accomplishments
               </label>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 {onGenerateDescription && (
                   <button
                     type="button"
                     onClick={() => onGenerateDescription(experience.id, experience.position, experience.company)}
                     disabled={loading || !experience.position}
-                    className="text-sm px-3 py-1 bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300 rounded-md hover:bg-green-200 dark:hover:bg-green-800 transition-colors flex items-center disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="text-xs sm:text-sm px-2 sm:px-3 py-1 bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300 rounded-md hover:bg-green-200 dark:hover:bg-green-800 transition-colors flex items-center disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 sm:h-4 sm:w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
                       <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
                     </svg>
-                    {loading ? 'Generating...' : 'Generate Experience'}
+                    {loading ? 'Generating...' : 'Generate'}
                   </button>
                 )}
                 {onEnhance && experience.description && (
@@ -174,12 +174,12 @@ const ExperienceForm = ({ data, onChange, onEnhance, loading, onGenerateDescript
                     type="button"
                     onClick={() => onEnhance(experience.id, experience.description)}
                     disabled={loading}
-                    className="text-sm px-3 py-1 bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300 rounded-md hover:bg-purple-200 dark:hover:bg-purple-800 transition-colors flex items-center disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="text-xs sm:text-sm px-2 sm:px-3 py-1 bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300 rounded-md hover:bg-purple-200 dark:hover:bg-purple-800 transition-colors flex items-center disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 sm:h-4 sm:w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clipRule="evenodd" />
                     </svg>
-                    {loading ? 'Enhancing...' : 'Enhance with AI'}
+                    {loading ? 'Enhancing...' : 'Enhance'}
                   </button>
                 )}
               </div>

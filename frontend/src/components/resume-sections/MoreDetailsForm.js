@@ -179,29 +179,19 @@ const MoreDetailsForm = ({ data = {}, onChange }) => {
           Languages
         </h3>
         <div className="mb-4">
-          <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row gap-2">
             <input
               type="text"
               value={newLanguage.name}
               onChange={(e) => setNewLanguage({ ...newLanguage, name: e.target.value })}
               onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddLanguage())}
               className="flex-grow px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-              placeholder="e.g., English, Spanish"
+              placeholder="e.g., English - Native, Spanish - Intermediate"
             />
-            <select
-              value={newLanguage.proficiency}
-              onChange={(e) => setNewLanguage({ ...newLanguage, proficiency: e.target.value })}
-              className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-            >
-              <option value="Basic">Basic</option>
-              <option value="Intermediate">Intermediate</option>
-              <option value="Advanced">Advanced</option>
-              <option value="Native">Native</option>
-            </select>
             <button
               type="button"
               onClick={handleAddLanguage}
-              className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 whitespace-nowrap"
             >
               Add
             </button>
@@ -211,10 +201,7 @@ const MoreDetailsForm = ({ data = {}, onChange }) => {
           <ul className="space-y-2">
             {languages.map((lang) => (
               <li key={lang.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-md">
-                <div>
-                  <span className="text-gray-800 dark:text-gray-200 font-medium">{lang.name}</span>
-                  <span className="text-gray-500 dark:text-gray-400 text-sm ml-2">({lang.proficiency})</span>
-                </div>
+                <span className="text-gray-800 dark:text-gray-200">{lang.name}</span>
                 <button
                   type="button"
                   onClick={() => handleRemoveLanguage(lang.id)}
