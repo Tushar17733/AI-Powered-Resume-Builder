@@ -1,4 +1,5 @@
-import dotenv from 'dotenv';
+// Load .env before any route modules read process.env (e.g. GEMINI_API_KEY)
+import 'dotenv/config';
 import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
@@ -10,9 +11,6 @@ import { fileURLToPath } from 'url';
 import authRoutes from './routes/auth.js';
 import resumeRoutes from './routes/resume.js';
 import aiRoutes from './routes/ai.js';
-
-// Configure dotenv
-dotenv.config();
 
 // ES modules equivalent of __dirname
 const __filename = fileURLToPath(import.meta.url);

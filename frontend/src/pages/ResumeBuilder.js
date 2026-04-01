@@ -13,6 +13,7 @@ import SummaryForm from '../components/resume-sections/SummaryForm';
 import MoreDetailsForm from '../components/resume-sections/MoreDetailsForm';
 import ResumePreview from '../components/ResumePreview';
 import TemplateSelector from '../components/TemplateSelector';
+import JobDescriptionATSStep from '../components/JobDescriptionATSStep';
 
 // Context
 import { ThemeContext } from '../context/ThemeContext';
@@ -28,6 +29,10 @@ const ResumeBuilder = () => {
   const [successMessage, setSuccessMessage] = useState('');
   const [isPreviewMode, setIsPreviewMode] = useState(false);
   const [templateId, setTemplateId] = useState('modern');
+  const [jobDescription, setJobDescription] = useState('');
+  const [atsResult, setAtsResult] = useState(null);
+  const [atsAnalyzing, setAtsAnalyzing] = useState(false);
+  const [atsError, setAtsError] = useState('');
   const [resumeData, setResumeData] = useState({
     title: 'My Resume',
     personalInfo: {
@@ -74,8 +79,11 @@ const ResumeBuilder = () => {
 
   // Auto-save to localStorage
   useEffect(() => {
-    localStorage.setItem('resumeBuilderData', JSON.stringify(resumeData));
-  }, [resumeData]);
+    localStorage.setItem(
+      'resumeBuilderData',
+      JSON.stringify({ ...resumeData, jobDescription })
+    );
+  }, [resumeData, jobDescription]);
 
   // Load from localStorage on initial render
   useEffect(() => {
@@ -108,6 +116,9 @@ const ResumeBuilder = () => {
           templateId: parsedData.templateId || 'modern'
         };
         setResumeData(cleanData);
+        if (typeof parsedData.jobDescription === 'string') {
+          setJobDescription(parsedData.jobDescription);
+        }
       } catch (error) {
         console.error('Error parsing saved data:', error);
         // Clear corrupted localStorage data
@@ -383,6 +394,39 @@ const ResumeBuilder = () => {
     }
   };
 
+  const runAtsAnalysis = async () => {
+    setAtsError('');
+    if (!jobDescription.trim()) {
+      setAtsError('Paste a job description first.');
+      return;
+    }
+    try {
+      setAtsAnalyzing(true);
+      const res = await aiService.analyzeResume({
+        resumeData,
+        jobDescription: jobDescription.trim(),
+      });
+      setAtsResult({
+        atsScore: res.data.atsScore,
+        missingKeywords: res.data.missingKeywords || [],
+        matchedKeywords: res.data.matchedKeywords || [],
+        highlightImprovements: res.data.highlightImprovements || [],
+        suggestions: res.data.suggestions || [],
+        fallback: res.data.fallback,
+      });
+    } catch (err) {
+      const msg =
+        err.response?.data?.msg ||
+        err.response?.data?.error ||
+        err.message ||
+        'ATS analysis failed';
+      setAtsError(msg);
+      setAtsResult(null);
+    } finally {
+      setAtsAnalyzing(false);
+    }
+  };
+
   if (initialLoading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -399,13 +443,59 @@ const ResumeBuilder = () => {
   const renderStep = () => {
     if (isPreviewMode) {
       return (
-        <div className="mt-6">
+        <div className="mt-6 space-y-8">
           <TemplateSelector 
             selectedTemplate={templateId} 
             onTemplateSelect={handleTemplateSelect}
             resumeData={resumeData}
           />
           <ResumePreview resumeData={resumeData} templateId={templateId} />
+          {atsResult && (
+            <div className="rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50/90 dark:bg-gray-900/50 p-4 sm:p-6">
+              <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-3">
+                ATS summary
+              </h3>
+              <p className="text-2xl font-bold text-indigo-600 dark:text-indigo-400 mb-4">
+                {atsResult.atsScore}
+                <span className="text-base font-normal text-gray-500 dark:text-gray-400">/100</span>
+              </p>
+              {atsResult.missingKeywords?.length > 0 && (
+                <div className="mb-3">
+                  <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Missing keywords</p>
+                  <div className="flex flex-wrap gap-2">
+                    {atsResult.missingKeywords.map((kw, i) => (
+                      <span
+                        key={`pv-m-${i}`}
+                        className="text-xs px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900/40 text-amber-900 dark:text-amber-100"
+                      >
+                        {kw}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {atsResult.highlightImprovements?.length > 0 && (
+                <div className="mb-3">
+                  <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Highlight improvements</p>
+                  <ul className="list-disc list-inside text-sm text-gray-700 dark:text-gray-300 space-y-1">
+                    {atsResult.highlightImprovements.slice(0, 5).map((h, i) => (
+                      <li key={`pv-h-${i}`}>{h}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {atsResult.suggestions?.length > 0 && (
+                <div>
+                  <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Suggestions</p>
+                  <ul className="list-disc list-inside text-sm text-gray-700 dark:text-gray-300 space-y-1">
+                    {atsResult.suggestions.slice(0, 5).map((s, i) => (
+                      <li key={`pv-s-${i}`}>{s}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       );
     }
@@ -481,6 +571,17 @@ const ResumeBuilder = () => {
             resumeData={resumeData}
           />
         );
+      case 9:
+        return (
+          <JobDescriptionATSStep
+            jobDescription={jobDescription}
+            onJobDescriptionChange={setJobDescription}
+            onAnalyze={runAtsAnalysis}
+            analyzing={atsAnalyzing}
+            atsResult={atsResult}
+            error={atsError}
+          />
+        );
       default:
         return null;
     }
@@ -539,7 +640,7 @@ const ResumeBuilder = () => {
         <div className="mb-6 sm:mb-8">
           <div className="flex justify-between items-center">
             <div className="flex flex-wrap gap-2">
-              {Array.from({ length: 8 }, (_, i) => i + 1).map((i) => (
+              {Array.from({ length: 9 }, (_, i) => i + 1).map((i) => (
                 <button
                   key={i}
                   onClick={() => setStep(i)}
@@ -563,6 +664,7 @@ const ResumeBuilder = () => {
             {step === 6 && 'Projects'}
             {step === 7 && 'More Details (Certifications, Achievements, Languages, Hobbies)'}
             {step === 8 && 'Choose Template'}
+            {step === 9 && 'Job description & ATS check'}
           </div>
         </div>
       )}
@@ -586,7 +688,7 @@ const ResumeBuilder = () => {
             Previous
           </button>
 
-          {step < 8 ? (
+          {step < 9 ? (
             <button
               onClick={nextStep}
               className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors text-sm sm:text-base order-1 sm:order-2"

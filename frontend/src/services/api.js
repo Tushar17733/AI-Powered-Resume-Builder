@@ -40,6 +40,7 @@ export const aiService = {
   suggestSkills: (data) => api.post('/ai/suggest-skills', data),
   matchJobDescription: (data) => api.post('/ai/match-job', data),
   generateJobDescription: (data) => api.post('/ai/generate-job-description', data),
+  analyzeResume: (data) => api.post('/ai/analyze-resume', data),
 };
 
 export default api;
