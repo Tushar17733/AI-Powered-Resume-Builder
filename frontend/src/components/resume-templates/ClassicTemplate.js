@@ -45,7 +45,7 @@ const ClassicTemplate = ({ resumeData }) => {
       {/* Summary */}
       {summary && (
         <section className="mb-8">
-          <h2 className="text-xl font-bold text-gray-900 mb-4 border-b border-gray-300 pb-1">PROFESSIONAL SUMMARY</h2>
+          <h2 className="text-xl font-bold text-gray-900 mb-4 border-b border-gray-300 pb-1">PROFILE</h2>
           <p className="text-gray-700 leading-relaxed">{summary}</p>
         </section>
       )}
@@ -53,7 +53,7 @@ const ClassicTemplate = ({ resumeData }) => {
       {/* Experience */}
       {experience.length > 0 && (
         <section className="mb-8">
-          <h2 className="text-xl font-bold text-gray-900 mb-4 border-b border-gray-300 pb-1">PROFESSIONAL EXPERIENCE</h2>
+          <h2 className="text-xl font-bold text-gray-900 mb-4 border-b border-gray-300 pb-1">EXPERIENCE</h2>
           {experience.map((exp, index) => (
             <div key={index} className="mb-6">
               <div className="flex justify-between items-start mb-2">

@@ -86,7 +86,7 @@ const ModernTemplate = ({ resumeData }) => {
       {/* Experience */}
       {experience.length > 0 && (
         <section className="mb-6">
-          <h2 className="text-lg font-semibold text-blue-600 mb-3">Professional Experience</h2>
+          <h2 className="text-lg font-semibold text-blue-600 mb-3">Experience</h2>
           
           {experience.map((exp, index) => (
             <div key={exp.id || exp._id || index} className="mb-4">

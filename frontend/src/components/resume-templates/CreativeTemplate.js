@@ -55,7 +55,7 @@ const CreativeTemplate = ({ resumeData }) => {
           <div className="bg-gradient-to-r from-orange-100 to-pink-100 p-4 rounded-lg">
             <h2 className="text-xl font-bold text-orange-700 mb-3 flex items-center">
               <span className="text-2xl mr-2">✨</span>
-              About Me
+              Profile
             </h2>
             <p className="text-gray-700 leading-relaxed">{summary}</p>
           </div>

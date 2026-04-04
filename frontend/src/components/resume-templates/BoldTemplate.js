@@ -48,7 +48,7 @@ const BoldTemplate = ({ resumeData }) => {
       {summary && (
         <section className="mb-8">
           <h2 className="text-2xl font-black text-yellow-400 mb-4 border-b-2 border-yellow-400 pb-2">
-            SUMMARY
+            PROFILE
           </h2>
           <p className="text-gray-300 leading-relaxed text-lg">{summary}</p>
         </section>

@@ -49,7 +49,7 @@ const ElegantTemplate = ({ resumeData }) => {
         <section className="mb-8">
           <h2 className="text-xl font-semibold text-purple-700 mb-4 flex items-center">
             <div className="w-1 h-6 bg-gradient-to-b from-purple-600 to-blue-600 mr-3"></div>
-            About Me
+            Profile
           </h2>
           <p className="text-gray-700 leading-relaxed pl-4">{summary}</p>
         </section>

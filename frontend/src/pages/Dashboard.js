@@ -4,32 +4,79 @@ import { Link } from 'react-router-dom';
 // Context
 import { AuthContext } from '../context/AuthContext';
 
+const REVIEWS_PER_PAGE = 3;
+
 const Dashboard = () => {
   const { user } = useContext(AuthContext);
   const [openFaq, setOpenFaq] = useState(0);
+  const [reviewPage, setReviewPage] = useState(0);
 
   const testimonials = useMemo(
     () => [
       {
         name: 'Aarav Mehta',
         role: 'Software Engineer',
+        avatar: 'https://i.pravatar.cc/128?img=12',
         quote:
           'The templates look premium and the AI suggestions helped me turn messy experience into strong bullet points. I landed 3 interviews in a week.',
       },
       {
         name: 'Riya Sharma',
         role: 'Marketing Associate',
+        avatar: 'https://i.pravatar.cc/128?img=45',
         quote:
           'Super clean UI. I built a resume in under 10 minutes and the preview looked exactly like a professional designer made it.',
       },
       {
         name: 'Kabir Singh',
         role: 'Final-year Student',
+        avatar: 'https://i.pravatar.cc/128?img=33',
         quote:
           'The step-by-step builder made it easy to structure my first CV. The export was crisp and ATS-friendly.',
       },
+      {
+        name: 'Neha Kapoor',
+        role: 'Product Designer',
+        avatar: 'https://i.pravatar.cc/128?img=5',
+        quote:
+          'I love how the preview matches the final output. Tweaking layout and typography without breaking ATS rules was a huge win.',
+      },
+      {
+        name: 'Vikram Desai',
+        role: 'Data Analyst',
+        avatar: 'https://i.pravatar.cc/128?img=68',
+        quote:
+          'Exported in minutes and my recruiter said the resume was easy to scan. The AI bullet rewriter saved me hours of editing.',
+      },
+      {
+        name: 'Ananya Iyer',
+        role: 'Career Switcher (Finance → PM)',
+        avatar: 'https://i.pravatar.cc/128?img=9',
+        quote:
+          'The guided sections helped me reframe transferable skills. I finally had a resume that told a coherent story for a new industry.',
+      },
+      {
+        name: 'Rohan Patel',
+        role: 'Recent Graduate',
+        avatar: 'https://i.pravatar.cc/128?img=15',
+        quote:
+          'Simple, fast, and no clutter. I made three tailored versions for different roles and kept them all in one place.',
+      },
+      {
+        name: 'Priya Nair',
+        role: 'HR Business Partner',
+        avatar: 'https://i.pravatar.cc/128?img=32',
+        quote:
+          'I recommend this to candidates I coach—the structure is what recruiters expect, and the content reads confident, not generic.',
+      },
     ],
     []
+  );
+
+  const reviewPageCount = Math.ceil(testimonials.length / REVIEWS_PER_PAGE);
+  const visibleReviews = testimonials.slice(
+    reviewPage * REVIEWS_PER_PAGE,
+    reviewPage * REVIEWS_PER_PAGE + REVIEWS_PER_PAGE
   );
 
   const faqs = useMemo(
@@ -255,7 +302,7 @@ const Dashboard = () => {
       {/* Testimonials */}
       <div className="relative">
         <div className="container mx-auto px-4 sm:px-6 pb-12 sm:pb-16 max-w-6xl">
-          <div className="flex items-end justify-between gap-6">
+          <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <p className="text-xs font-semibold tracking-wider text-emerald-700 dark:text-emerald-300">REVIEWS</p>
               <h3 className="mt-2 text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white">
@@ -265,10 +312,34 @@ const Dashboard = () => {
                 Real outcomes from people who needed a resume that looks great and reads even better.
               </p>
             </div>
+            <div className="flex shrink-0 items-center gap-2 sm:pb-0.5">
+              <button
+                type="button"
+                onClick={() => setReviewPage((p) => Math.max(0, p - 1))}
+                disabled={reviewPage === 0}
+                aria-label="Previous reviews"
+                className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-900/80 text-gray-800 dark:text-gray-100 shadow-sm hover:bg-gray-50 dark:hover:bg-gray-800 disabled:pointer-events-none disabled:opacity-40 transition-colors"
+              >
+                <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                  <path d="M15 18l-6-6 6-6" />
+                </svg>
+              </button>
+              <button
+                type="button"
+                onClick={() => setReviewPage((p) => Math.min(reviewPageCount - 1, p + 1))}
+                disabled={reviewPage >= reviewPageCount - 1}
+                aria-label="Next reviews"
+                className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-900/80 text-gray-800 dark:text-gray-100 shadow-sm hover:bg-gray-50 dark:hover:bg-gray-800 disabled:pointer-events-none disabled:opacity-40 transition-colors"
+              >
+                <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                  <path d="M9 18l6-6-6-6" />
+                </svg>
+              </button>
+            </div>
           </div>
 
-          <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
-            {testimonials.map((t) => (
+          <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {visibleReviews.map((t) => (
               <div
                 key={t.name}
                 className="rounded-2xl border border-gray-100 dark:border-gray-800 bg-white/70 dark:bg-gray-900/50 backdrop-blur p-6"
@@ -280,10 +351,18 @@ const Dashboard = () => {
                 </div>
                 <p className="mt-4 text-sm text-gray-700 dark:text-gray-200">“{t.quote}”</p>
                 <div className="mt-5 flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500" />
-                  <div>
-                    <p className="text-sm font-bold text-gray-900 dark:text-white">{t.name}</p>
-                    <p className="text-xs text-gray-600 dark:text-gray-400">{t.role}</p>
+                  <img
+                    src={t.avatar}
+                    alt={`${t.name} profile`}
+                    width={40}
+                    height={40}
+                    className="h-10 w-10 shrink-0 rounded-full object-cover ring-2 ring-emerald-100 dark:ring-emerald-900/40 border border-gray-200/80 dark:border-gray-700"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <div className="min-w-0">
+                    <p className="text-sm font-bold text-gray-900 dark:text-white truncate">{t.name}</p>
+                    <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2">{t.role}</p>
                   </div>
                 </div>
               </div>
